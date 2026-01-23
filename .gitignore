@@ -6,6 +6,9 @@ downloads/
 logs/
 */__pycache__
 
+# this is to protect your creds
+/config
+
 # Environments
 .env
 .envrc
