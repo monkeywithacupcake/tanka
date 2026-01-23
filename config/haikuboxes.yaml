@@ -1,0 +1,20 @@
+haikuboxes:
+  - name: your-haikubox-name  # Replace with your HaikuBox name
+    enabled: true
+
+settings:
+  download_dir: ./downloads
+  headless: true  # Set to false to see browser during download
+  download_timeout: 60
+  log_level: INFO
+
+  # Authentication credentials for listen.haikubox.com
+  auth:
+    email: "your.email@example.com"  # Your HaikuBox login email
+    password: "your_password"  # Your HaikuBox login password
+
+  # Analysis settings (optional - these are the defaults)
+  analysis:
+    score_threshold: 0.5  # Minimum confidence (0.0 to 1.0)
+    top_n: 10  # Number of top species to show
+    exclude_species: []  # List of species to exclude, e.g., ["House Sparrow", "Rock Pigeon"]
