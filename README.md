@@ -68,6 +68,21 @@ settings:
 ## Usage
 
 I have more ideas later, but for now, this repo has code to download data and to do some simple analysis.
+It also can post to bluesky.
+
+### Expected use
+
+Typical expected use is: download data (dates yesterday and today, if you are behind UTC), analyze data (date yesterday, default), post analysis (yesterday, default)
+
+Assuming it is 2026-02-01, so you want to post about Jan 31: 
+
+```bash
+python3 main.py --dates 2026-01-31-2026-02-01
+python3 analyze.py --time --save
+python3 bsky_post.py 
+```
+
+**I plan to make this so that main will do all of this and move the main actions to download. **
 
 ### Downloading Bird Data (main.py)
 
@@ -120,6 +135,9 @@ python3 analyze.py --box your-haikubox-name
 ```
 
 **Analyze all downloaded data:**
+I broke this by adding the save option, it still 'works' but i need to rewrite it 
+--all should return a different result, something that makes sense across dates
+
 ```bash
 python3 analyze.py --all
 ```
@@ -228,12 +246,15 @@ tanka/
 │   ├── downloader.py      # Playwright browser automation for downloads
 │   ├── analyzer.py        # Bird data analysis and statistics
 │   └── logger.py          # Logging setup
+│   └── poster.py          # Posts to bluesky
 ├── config/
 │   └── haikuboxes.yaml    # HaikuBox and authentication config
+├── analysis/              # Saved analysis JSON (created automatically)
 ├── downloads/             # Downloaded CSV files (created automatically)
 ├── logs/                  # Application logs
 ├── main.py                # Download script - run this to get data
 ├── analyze.py             # Analysis script - run this to analyze data
+├── bsky_post.py           # Posting script - run this to post to bsky
 ├── requirements.txt       # Python dependencies
 └── README.md              # This file
 ```
@@ -242,6 +263,7 @@ tanka/
 ## Logs
 
 Logs are saved to [logs/haikubox_YYYYMMDD.log](logs/) with daily rotation.
+They will be deleted after 7 days by default.
 
 To view recent logs:
 ```bash

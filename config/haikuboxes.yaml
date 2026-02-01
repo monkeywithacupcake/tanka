@@ -1,6 +1,7 @@
 haikuboxes:
   - name: your-haikubox-name  # Replace with your HaikuBox name
     enabled: true
+    location: "Silverdale, WA" # whatever location string
 
 settings:
   download_dir: ./downloads

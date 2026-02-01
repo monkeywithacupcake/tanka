@@ -59,23 +59,13 @@ class TankaPoster:
         if not analysis:
             return ""
 
-        # Extract date from filename (format: boxname_YYYY-MM-DD.csv)
-        date_str = ""
-        if 'file' in analysis:
-            parts = analysis['file'].replace('.csv', '').split('_')
-            if len(parts) >= 2:
-                date_str = parts[-1]
-        elif 'files' in analysis and analysis['files']:
-            parts = analysis['files'][0].replace('.csv', '').split('_')
-            if len(parts) >= 2:
-                date_str = parts[-1]
-
+        date_str = analysis.get('local_date', "")
         total = analysis.get('total_detections', 0)
         filtered = analysis.get('filtered_detections', 0)
         unique = analysis.get('unique_species', 0)
         threshold = analysis.get('score_threshold', 0.5)
 
-        return (f"Summary: {date_str}\n"
+        return (f"Haikubox Summary: {date_str}\n"
                 f"Total detections: {total}\n"
                 f"With confidence (>{threshold}): {filtered}\n"
                 f"Unique species: {unique}")
@@ -89,12 +79,42 @@ class TankaPoster:
         if not new_birds:
             return ""
 
-        lines = ["New arrivals (not seen in 7 days):"]
+        lines = ["Rare-ish (not seen in 7 days):"]
         for bird in new_birds:
             lines.append(f"• {bird}")
 
         return "\n".join(lines)
 
+    def format_time_summary_post(self, analysis: Dict) -> str:
+        """Format time summary (empty if none)"""
+        if not analysis:
+            return ""
+
+        ts = analysis.get('time_summary', [])
+        if not ts:
+            return ""
+
+        aw = f"{ts.get('first_detection', 0):02d} - {ts.get('last_detection', 0):02d}"
+        bh = f"{ts.get('busiest_hour', 0):02d}"
+        la = f"{ts.get('most_active_species')} ({ts.get('most_active_span')}+ hours)"
+        
+        lines = [
+            f"--Time Summary--",
+            f"Active Window: {aw}",
+            f"Busiest Hour: {bh}",
+            f"Longest active: {la}"
+            ]
+
+        early_birds = ts.get('early_birds', [])
+        if early_birds:
+            lines.append(f"Early birds: {', '.join(early_birds)}")
+
+        night_owls = ts.get('night_owls', [])
+        if night_owls:
+            lines.append(f"Night owls: {', '.join(night_owls)}")
+
+        return "\n".join(lines)
+    
     def post_analysis(self, analysis: Dict) -> None:
         """
         Format and post analysis results as a thread
@@ -102,13 +122,17 @@ class TankaPoster:
         Args:
             analysis: Analysis results dictionary (from JSON)
         """
-        top_species_post = self.format_top_species_post(analysis)
+        
         summary_post = self.format_summary_post(analysis)
+        top_species_post = self.format_top_species_post(analysis)
         new_birds_post = self.format_new_birds_post(analysis)
-
-        posts = [top_species_post, summary_post]
+        time_summary_post = self.format_time_summary_post(analysis)
+        
+        posts = [summary_post, top_species_post]
         if new_birds_post:
             posts.append(new_birds_post)
+        if time_summary_post:
+            posts.append(time_summary_post)
 
         logger.info(f"Creating thread with {len(posts)} posts")
         self.create_thread(*posts)
