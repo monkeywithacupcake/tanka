@@ -3,7 +3,32 @@
 import logging
 import sys
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timedelta
+
+
+def cleanup_old_logs(log_dir: Path, max_age_days: int = 7):
+    """
+    Delete log files older than max_age_days
+
+    Args:
+        log_dir: Directory containing log files
+        max_age_days: Delete logs older than this many days (default 7)
+    """
+    if not log_dir or not log_dir.exists():
+        return
+
+    cutoff = datetime.now() - timedelta(days=max_age_days)
+
+    for log_file in log_dir.glob("haikubox_*.log"):
+        # Extract date from filename (format: haikubox_YYYYMMDD.log)
+        try:
+            date_str = log_file.stem.replace("haikubox_", "")
+            file_date = datetime.strptime(date_str, "%Y%m%d")
+            if file_date < cutoff:
+                log_file.unlink()
+        except (ValueError, OSError):
+            # Skip files that don't match expected format or can't be deleted
+            pass
 
 
 def setup_logging(log_level: str = "INFO", log_dir: Path = None):
@@ -40,6 +65,9 @@ def setup_logging(log_level: str = "INFO", log_dir: Path = None):
     if log_dir:
         log_dir = Path(log_dir)
         log_dir.mkdir(parents=True, exist_ok=True)
+
+        # Clean up old logs
+        cleanup_old_logs(log_dir)
 
         # Create log file with current date
         log_filename = f"haikubox_{datetime.now().strftime('%Y%m%d')}.log"
