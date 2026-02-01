@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-HaikuBox Bird Data Analyzer - CLI
+Tanka HaikuBox Bird Data Analyzer
 
 Analyzes downloaded CSV files and generates bird detection summaries.
 Dates are in LOCAL time. Data is downloaded in UTC, so analyzing
@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument(
         '--date',
         type=str,
-        help='Local date to analyze (YYYY-MM-DD). Defaults to yesterday.'
+        help='Local date to analyze (YYYY-MM-DD). Defaults to yuesterday.'
     )
 
     parser.add_argument(

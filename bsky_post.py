@@ -78,7 +78,7 @@ def main():
             logger.error(f"Invalid date format: {args.date}. Use YYYY-MM-DD")
             sys.exit(1)
     else:
-        target_date = datetime.now() - timedelta(days=1)
+        target_date = datetime.now() - timedelta(days=1) # yesterday
 
     date_str = target_date.strftime('%Y-%m-%d')
 
@@ -90,6 +90,8 @@ def main():
         logger.error(f"Analysis file not found: {json_path}")
         print(f"\nNo analysis found for {date_str}.")
         print(f"Run: python analyze.py --date {date_str} --save")
+        print(f"or if you want time data")
+        print(f"Run: python analyze.py --date {date_str} --time --save")
         sys.exit(1)
 
     # Load analysis from JSON
@@ -108,6 +110,9 @@ def main():
         new_birds = poster.format_new_birds_post(analysis)
         if new_birds:
             posts.append(new_birds)
+        time_summary_post = poster.format_time_summary_post(analysis)
+        if time_summary_post:
+            posts.append(time_summary_post)
 
         print(f"\n=== DRY RUN: {len(posts)} posts would be created ===\n")
         for i, post in enumerate(posts, 1):

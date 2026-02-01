@@ -77,41 +77,43 @@ Typical expected use is: download data (dates yesterday and today, if you are be
 Assuming it is 2026-02-01, so you want to post about Jan 31: 
 
 ```bash
-python3 main.py --dates 2026-01-31-2026-02-01
+python3 download.py --dates 2026-01-31-2026-02-01
 python3 analyze.py --time --save
 python3 bsky_post.py 
 ```
 
+This is now default behavior of `python main.py`!
+
 **I plan to make this so that main will do all of this and move the main actions to download. **
 
-### Downloading Bird Data (main.py)
+### Downloading Bird Data (download.py)
 
 **Download yesterday's data** (the most common use case):
 ```bash
-python3 main.py
+python3 download.py
 ```
 
 **Download a specific date:**
 ```bash
-python3 main.py --date 2026-01-15
+python3 download.py --date 2026-01-15
 ```
 
 **Download a date range:**
 This actually downloads each day in this range individually, but can save you time if you are trying to build your history.
 ```bash
-python3 main.py --dates 2026-01-10-2026-01-15
+python3 download.py --dates 2026-01-10-2026-01-15
 ```
 
 **Download for a specific HaikuBox only:**
 I only have one, but you might have more than one. TBH - i can't really test this one.
 ```bash
-python3 main.py --box your-haikubox-name
+python3 download.py --box your-haikubox-name
 ```
 
 **Run with visible browser** (great for debugging):
 If something is not right (the date picker is a beast, for example), you can see what is happening with this. 
 ```bash
-python3 main.py --headless false
+python3 download.py --headless false
 ```
 
 ### Analyzing Bird Data (analyze.py)
@@ -206,7 +208,7 @@ You can skip this if you already know it works
 
 ```bash
 # Test download
-python3 main.py
+python3 download.py
 
 # Test analysis
 python3 analyze.py
@@ -220,12 +222,12 @@ crontab -e  # Opens cron editor
 
 **Option A: Download only** (at 2:00 AM daily):
 ```bash
-0 2 * * * cd /path/to/tanka && ./venv/bin/python main.py >> logs/cron.log 2>&1
+0 2 * * * cd /path/to/tanka && ./venv/bin/python download.py >> logs/cron.log 2>&1
 ```
 
 **Option B: Download + Analyze** (download at 2:00 AM, analyze at 2:05 AM):
 ```bash
-0 2 * * * cd /path/to/tanka && ./venv/bin/python main.py >> logs/cron.log 2>&1
+0 2 * * * cd /path/to/tanka && ./venv/bin/python download.py >> logs/cron.log 2>&1
 5 2 * * * cd /path/to/tanka && ./venv/bin/python analyze.py >> logs/cron.log 2>&1
 ```
 
@@ -252,7 +254,7 @@ tanka/
 ├── analysis/              # Saved analysis JSON (created automatically)
 ├── downloads/             # Downloaded CSV files (created automatically)
 ├── logs/                  # Application logs
-├── main.py                # Download script - run this to get data
+├── download.py                # Download script - run this to get data
 ├── analyze.py             # Analysis script - run this to analyze data
 ├── bsky_post.py           # Posting script - run this to post to bsky
 ├── requirements.txt       # Python dependencies
