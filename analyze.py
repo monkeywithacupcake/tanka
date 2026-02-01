@@ -1,17 +1,19 @@
 #!/usr/bin/env python3
 """
-Tanka HaikuBox Bird Data Analyzer - CLI
+HaikuBox Bird Data Analyzer - CLI
 
 Analyzes downloaded CSV files and generates bird detection summaries.
 
 Usage:
-    python analyze.py                         # Analyze yesterday's data
+    python analyze.py                          # Analyze yesterday's data
     python analyze.py --date 2026-01-19       # Analyze specific date
-    python analyze.py --box my-name-brbs      # Analyze specific HaikuBox
+    python analyze.py --box oly-vw-brbs       # Analyze specific HaikuBox
     python analyze.py --all                   # Analyze all available CSVs
+    python analyze.py --time                  # Include time-of-day analysis
 """
 
 import argparse
+import json
 import sys
 import logging
 from datetime import datetime, timedelta
@@ -67,6 +69,18 @@ def parse_args():
         help='Override number of top species to show'
     )
 
+    parser.add_argument(
+        '--time',
+        action='store_true',
+        help='Include time-of-day analysis (hourly activity and species time ranges)'
+    )
+
+    parser.add_argument(
+        '--save',
+        action='store_true',
+        help='Save analysis results to JSON file in analysis/ directory'
+    )
+
     return parser.parse_args()
 
 
@@ -106,6 +120,27 @@ def find_csv_files(download_dir: Path, haikubox_name: str = None,
     return sorted(csv_files)
 
 
+def save_analysis_json(analysis: dict, output_dir: Path, date_str: str) -> Path:
+    """
+    Save analysis results to JSON file
+
+    Args:
+        analysis: Analysis results dictionary
+        output_dir: Directory to save JSON file
+        date_str: Date string for filename (YYYY-MM-DD)
+
+    Returns:
+        Path to saved JSON file
+    """
+    output_dir.mkdir(parents=True, exist_ok=True)
+    output_path = output_dir / f"{date_str}.json"
+
+    with open(output_path, 'w', encoding='utf-8') as f:
+        json.dump(analysis, f, indent=2)
+
+    return output_path
+
+
 def main():
     """Main entry point"""
     args = parse_args()
@@ -123,7 +158,7 @@ def main():
     setup_logging(config.get_log_level(), log_dir)
 
     logger.info("=" * 60)
-    logger.info("Tanka HaikuBox Bird Data Analyzer - Starting")
+    logger.info("HaikuBox Bird Data Analyzer - Starting")
     logger.info("=" * 60)
 
     # Get analysis settings
@@ -139,7 +174,8 @@ def main():
     analyzer = BirdDataAnalyzer(
         score_threshold=analysis_settings['score_threshold'],
         top_n=analysis_settings['top_n'],
-        exclude_species=analysis_settings['exclude_species']
+        exclude_species=analysis_settings['exclude_species'],
+        include_time_analysis=args.time
     )
 
     # Determine which files to analyze
@@ -178,16 +214,31 @@ def main():
     if len(csv_files) == 1:
         # Single file analysis
         analysis = analyzer.analyze_csv(csv_files[0])
-        if analysis:
-            summary = analyzer.format_summary(analysis)
-            print("\n" + summary)
     else:
         # Multiple files - combine analysis
         logger.info("Combining analysis from multiple files")
         analysis = analyzer.analyze_multiple_csvs(csv_files)
-        if analysis:
-            summary = analyzer.format_summary(analysis)
-            print("\n" + summary)
+
+    if not analysis:
+        logger.error("Analysis failed")
+        sys.exit(1)
+
+    # Print summary
+    summary = analyzer.format_summary(analysis)
+    print("\n" + summary)
+
+    # Save to JSON if requested
+    if args.save:
+        analysis_dir = project_root / "analysis"
+        # Use target date for filename, or today if analyzing all
+        if args.all:
+            date_str = datetime.now().strftime('%Y-%m-%d')
+        else:
+            date_str = target_date.strftime('%Y-%m-%d')
+
+        output_path = save_analysis_json(analysis, analysis_dir, date_str)
+        logger.info(f"Analysis saved to: {output_path}")
+        print(f"\nAnalysis saved to: {output_path}")
 
     logger.info("=" * 60)
     logger.info("Analysis Complete")

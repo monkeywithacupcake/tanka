@@ -1,4 +1,4 @@
-"""Configuration management for Tanka"""
+"""Configuration management for HaikuBox downloader"""
 
 import os
 import yaml
@@ -97,6 +97,19 @@ class Config:
         return {
             'email': auth.get('email', ''),
             'password': auth.get('password', '')
+        }
+    
+    def get_bsky_credentials(self) -> Dict[str, str]:
+        """
+        Get blueskly credentials
+
+        Returns:
+            Dictionary with 'user_name' and 'app_pword' keys
+        """
+        bsky = self.get_setting('bsky', {})
+        return {
+            'user_name': bsky.get('user_name', ''),
+            'app_pword': bsky.get('app_pword', '')
         }
 
     def get_analysis_settings(self) -> Dict[str, Any]:

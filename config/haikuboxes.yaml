@@ -13,6 +13,12 @@ settings:
     email: "your.email@example.com"  # Your HaikuBox login email
     password: "your_password"  # Your HaikuBox login password
 
+  # Bluesky settings: to make posting work
+  # you should go make an app password do not use your regular one
+  bsky:
+    user_name: "user_name.bsky.social" # Your Bluesky User Name
+    app_pword: "app_password" # Your App Password for This
+
   # Analysis settings (optional - these are the defaults)
   analysis:
     score_threshold: 0.5  # Minimum confidence (0.0 to 1.0)

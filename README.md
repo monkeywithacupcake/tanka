@@ -51,7 +51,11 @@ settings:
   auth:
     email: "your.email@example.com"  # Your HaikuBox login email
     password: "your_password"  # Your HaikuBox login password
-
+  # Bluesky settings: to make posting work
+  # you should go make an app password do not use your regular one
+  bsky:
+    user_name: "user_name.bsky.social" # Your Bluesky User Name
+    app_pword: "app_password" # Your App Password for This
   # Analysis settings (optional - these are the defaults)
   analysis:
     score_threshold: 0.5  # Minimum confidence (0.0 to 1.0)
@@ -153,6 +157,18 @@ Top 10 Species:
  4. Brown Creeper                    70 detections
  5. Red-breasted Nuthatch            61 detections
 ...
+```
+
+### Post the Birds to Bluesky
+
+```bash
+./venv/bin/python bsky_post.py 
+```
+
+Do a dry run first to see what will post
+
+```bash
+./venv/bin/python bsky_post.py --dryrun
 ```
 
 ### ⏰ Automated Daily Downloads & Analysis
