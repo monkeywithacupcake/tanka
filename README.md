@@ -84,8 +84,6 @@ python3 bsky_post.py
 
 This is now default behavior of `python main.py`!
 
-**I plan to make this so that main will do all of this and move the main actions to download. **
-
 ### Downloading Bird Data (download.py)
 
 **Download yesterday's data** (the most common use case):
@@ -254,9 +252,10 @@ tanka/
 ├── analysis/              # Saved analysis JSON (created automatically)
 ├── downloads/             # Downloaded CSV files (created automatically)
 ├── logs/                  # Application logs
-├── download.py                # Download script - run this to get data
+├── download.py            # Download script - run this to get data
 ├── analyze.py             # Analysis script - run this to analyze data
 ├── bsky_post.py           # Posting script - run this to post to bsky
+├── main.py                # Download, Analyze, and Post
 ├── requirements.txt       # Python dependencies
 └── README.md              # This file
 ```
