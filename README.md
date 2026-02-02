@@ -40,6 +40,7 @@ Edit [config/haikuboxes.yaml](config/haikuboxes.yaml) and add your credentials:
 haikuboxes:
   - name: your-haikubox-name  # Replace with your HaikuBox name
     enabled: true
+    location: "any location string" # city or lat lon - whatever
 
 settings:
   download_dir: ./downloads

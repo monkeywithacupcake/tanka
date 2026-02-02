@@ -42,7 +42,7 @@ def parse_args():
     parser.add_argument(
         '--date',
         type=str,
-        help='Local date to analyze (YYYY-MM-DD). Defaults to yuesterday.'
+        help='Local date to analyze (YYYY-MM-DD). Defaults to 1 day ago for complete data.'
     )
 
     parser.add_argument(
@@ -216,9 +216,9 @@ def main():
                 logger.error(f"Invalid date format: {args.date}. Use YYYY-MM-DD")
                 sys.exit(1)
         else:
-            # Default to 2 days ago for guaranteed complete data
+            # Default to yesterday
             # (yesterday's local data requires today's UTC file which may be incomplete)
-            target_date = datetime.now() - timedelta(days=2)
+            target_date = datetime.now() - timedelta(days=1)
 
         logger.info(f"Target local date: {target_date.strftime('%Y-%m-%d')}")
 
@@ -239,8 +239,9 @@ def main():
         all_analyses = []
         for box in enabled_boxes:
             box_name = box['name']
+            box_location = box['location']
             logger.info(f"Analyzing {box_name} for local date {target_date.strftime('%Y-%m-%d')}")
-            analysis = analyzer.analyze_local_date(download_dir, box_name, target_date)
+            analysis = analyzer.analyze_local_date(download_dir, box_name, target_date, box_location)
             if analysis:
                 all_analyses.append(analysis)
 

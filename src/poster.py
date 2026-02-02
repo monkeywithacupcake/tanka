@@ -1,6 +1,6 @@
 import logging
+import random
 from typing import Dict
-
 from atproto import Client, models
 
 logger = logging.getLogger(__name__)
@@ -60,12 +60,13 @@ class TankaPoster:
             return ""
 
         date_str = analysis.get('local_date', "")
+        box_location = analysis.get('box_location', "")
         total = analysis.get('total_detections', 0)
         filtered = analysis.get('filtered_detections', 0)
         unique = analysis.get('unique_species', 0)
         threshold = analysis.get('score_threshold', 0.5)
 
-        return (f"Haikubox Summary: {date_str}\n"
+        return (f"Haikubox Summary: {date_str} {box_location}\n" #
                 f"Total detections: {total}\n"
                 f"With confidence (>{threshold}): {filtered}\n"
                 f"Unique species: {unique}")
@@ -133,6 +134,15 @@ class TankaPoster:
             posts.append(new_birds_post)
         if time_summary_post:
             posts.append(time_summary_post)
+        
+        shameless_plug = [
+            f"data from my haikubox",
+            f"downloaded and posted by tanka",
+            f"https://github.com/monkeywithacupcake/tanka",
+            ]
+        do_plug = random.randint(0,10)
+        if do_plug == 1:
+            posts.append(shameless_plug)
 
         logger.info(f"Creating thread with {len(posts)} posts")
         self.create_thread(*posts)

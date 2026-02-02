@@ -661,7 +661,8 @@ class BirdDataAnalyzer:
         }
 
     def analyze_local_date(self, download_dir: Path, box_name: str,
-                           local_date: datetime) -> Optional[Dict]:
+                           local_date: datetime, 
+                           box_location: str) -> Optional[Dict]:
         """
         Analyze bird detections for a specific local date.
 
@@ -693,7 +694,7 @@ class BirdDataAnalyzer:
 
         logger.info(f"Analyzing local date {local_date.strftime('%Y-%m-%d')} "
                    f"(requires UTC files: {file1.name}, {file2.name})")
-
+        logger.info(f"---- blarge {box_location}")
         # Load detections from both files
         all_detections = []
 
@@ -742,6 +743,7 @@ class BirdDataAnalyzer:
         result = {
             'local_date': local_date.strftime('%Y-%m-%d'),
             'box_name': box_name,
+            'box_location': box_location,
             'utc_files': [f.name for f in [file1, file2] if f.exists()],
             'total_detections': len(local_filtered),
             'filtered_detections': len(score_filtered),
