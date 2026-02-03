@@ -17,10 +17,10 @@ def main():
     # 5-second delay
     time.sleep(5)
     # Call analysis
-    subprocess.run([sys.executable, "analyze.py"])
+    subprocess.run([sys.executable, "analyze.py", "--time", "--save"])
     time.sleep(5)
     # Call poster
-    subprocess.run([sys.executable, "bsky_post.py","--dryrun"])
+    subprocess.run([sys.executable, "bsky_post.py", "--dryrun"])
 
 if __name__ == "__main__":
     main()
